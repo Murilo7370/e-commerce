@@ -64,7 +64,20 @@ export class ListaProdutos {
     }
     //! Metodo para criar um estado de seleçao com signal string | null
     produtoSelecionado = signal <string | null>(null);
-    }
-  
-  
-;
+
+      //! metodo para criar um estado de seleçao carrinho com signal
+      carrinho = signal <{nome: string; preco: number}[]>([]);
+      adicionarAocarrinho(produto:{nome: string; preco: number}){
+        this.carrinho.update(listaAtual => [...listaAtual, produto]
+        );
+      }
+    //!metodo para calcular a quantidade total de itens no carrinho
+quantidadeCarrinho = computed(() => this.carrinho().length);
+//!metodo que calcular o valor total dos itens do carrinho
+quantidadecarrinho = computed(() => this.carrinho().length);
+//!metodo que calcular o valor total dos itens do carrinho
+
+totalCarrinho = computed(() =>
+{return this.carrinho().reduce((total,item) =>
+total + item.preco,0)});
+}
