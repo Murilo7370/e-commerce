@@ -2,7 +2,7 @@ import { Component, signal } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { UpperCasePipe } from '@angular/common';
 //import { RouterOutlet } from '@angular/router'; //remove a importaçao de routerOutlet,pois nao e necessario para o necessario  para este componente
-//import { RouterOutlet, RouterLink} from './components/produto/produto';//importando a classe produto do arquivo produto.ts paraser usada no componente app.ts
+import { usuarioLogado,login,logout } from './core/auth';
 
 @Component({
   selector: 'app-root',
@@ -13,4 +13,7 @@ import { UpperCasePipe } from '@angular/common';
 export class App {
   protected readonly title = signal('e-commerce');
   nomeLoja = 'Mercado dos lisos';
+  usuarioLogado =usuarioLogado;
+  login =login;
+  logout =logout;
 }
