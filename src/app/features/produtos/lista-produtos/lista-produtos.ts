@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
+import { Component} from '@angular/core';
 import {Produto} from '../produto/produto'
 import {signal} from '@angular/core'
 import { computed } from '@angular/core';
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
 import { effect} from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { produtosService } from '../produtos.service';
+import { inject } from '@angular/core';
+
 @Component({
   selector: 'app-lista-produtos',
   imports: [Produto,PrecoFormatadoPipe,UpperCasePipe],
@@ -46,26 +48,22 @@ export class ListaProdutos {
       ]);
     }
 carregarProdutos(){
-this.carregando.set(true);
-this.http.get<{title: string; price: number}[]>
-('https://fakestoreapi.com/products').subscribe({
-  next: (dados) => {
-    const produtosFormatados = dados.map(p =>({
-      nome: p.title,
-      preco: p.price,
-    }));
-    this.produtos.set(produtosFormatados);
-    this.carregando.set(false);
-  },
-  error: (erro) =>{
-    console.error('Erro ao carregar produtos', erro);
-    this.carregando.set(false);
-  }
-});
+  this.carregando.set(true);
+  this.produtosService.buscarProdutos().subscribe({
+    next: (dados) => {
+      const produtos = this.produtosService.transformarProdutos(dados);
+      this.produtos.set(produtos);
+      this.carregando.set(false);
+    },
+    error: (erro) => {
+      console.error('Erro ao carregar produtos: ', erro);
+      this.carregando.set(false);
+    }
+  });
    }
     
     //! metodo para monitorar alteraçoes em tempo real usando effect()
-    constructor(private http: HttpClient){
+    constructor(){
       //! Carrega a API
       this.carregarProdutos();
 
@@ -100,4 +98,6 @@ quantidadecarrinho = computed(() => this.carrinho().length);
 totalCarrinho = computed(() =>
 {return this.carrinho().reduce((total,item) =>
 total + item.preco,0)});
+
+private produtosService = inject(produtosService);
 }
