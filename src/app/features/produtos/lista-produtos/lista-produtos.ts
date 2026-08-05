@@ -15,7 +15,8 @@ import { inject } from '@angular/core';
   styleUrl: './lista-produtos.css',
 })
 export class ListaProdutos {
-  //Lista com dados - Array
+  erro = signal <string | null> (null);
+ //Lista com dados - Array
   produtos = signal <{nome: string; preco: number}[]>([]);
   carregando = signal(true);
 //!funçao para exibir produtos selecionados pelo usuario no console
@@ -29,7 +30,6 @@ export class ListaProdutos {
       ...listaAtual,
       {nome:'Playstation 5', preco:3000},
      ]);
-  
     }
     //!funçao que contabiliza a quantidade de produtos na lista com metodo computed()
     totalProdutos = computed(() =>this.produtos().length);
@@ -55,9 +55,10 @@ carregarProdutos(){
       this.produtos.set(produtos);
       this.carregando.set(false);
     },
-    error: (erro) => {
-      console.error('Erro ao carregar produtos: ', erro);
-      this.carregando.set(false);
+  error: (erro) => {
+      console.error('Erro ao carregar produtos: ',erro);
+      this.erro.set('Erro o carregar produtos.por favor tente novamente!');
+this.carregando.set(false);
     }
   });
    }
@@ -85,7 +86,7 @@ carregarProdutos(){
 
       //! metodo para criar um estado de seleçao carrinho com signal
       carrinho = signal <{nome: string; preco: number}[]>([]);
-      adicionarAocarrinho(produto:{nome: string; preco: number}){
+      adicionarAoCarrinho(produto:{nome: string; preco: number}){
         this.carrinho.update(listaAtual => [...listaAtual, produto]
         );
       }
