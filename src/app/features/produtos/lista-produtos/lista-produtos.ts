@@ -5,8 +5,9 @@ import { computed } from '@angular/core';
 import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
 import { effect} from '@angular/core';
 import { UpperCasePipe } from '@angular/common';
-import { produtosService } from '../produtos.service';
+import { produtosService } from '../../../core/services/produtos.service';
 import { inject } from '@angular/core';
+import { CarrinhoService } from '../../../core/services/carrinho.service';
 
 @Component({
   selector: 'app-lista-produtos',
@@ -85,20 +86,22 @@ this.carregando.set(false);
     produtoSelecionado = signal <string | null>(null);
 
       //! metodo para criar um estado de seleçao carrinho com signal
-      carrinho = signal <{nome: string; preco: number}[]>([]);
+      
       adicionarAoCarrinho(produto:{nome: string; preco: number}){
-        this.carrinho.update(listaAtual => [...listaAtual, produto]
-        );
+        this.carrinhoService.adicionar(produto);
+        ;
       }
     //!metodo para calcular a quantidade total de itens no carrinho
-quantidadeCarrinho = computed(() => this.carrinho().length);
-//!metodo que calcular o valor total dos itens do carrinho
-quantidadecarrinho = computed(() => this.carrinho().length);
+
 //!metodo que calcular o valor total dos itens do carrinho
 
-totalCarrinho = computed(() =>
-{return this.carrinho().reduce((total,item) =>
-total + item.preco,0)});
+//!metodo que calcular o valor total dos itens do carrinho
+
 
 private produtosService = inject(produtosService);
+public carrinhoService = inject(CarrinhoService);
+
+quantidadeCarrinho = this.carrinhoService.quantidadeItens;
+totalCarrinho = this.carrinhoService.totalItens;
+
 }
