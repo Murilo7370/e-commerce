@@ -1,34 +1,45 @@
-import { HttpInterceptorFn } from "@angular/common/http";
-import { tap } from "rxjs";
-import { catchError } from "rxjs";
-import { throwError } from "rxjs";
+import { inject } from '@angular/core';
+import { HttpInterceptorFn } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { tap, catchError, throwError } from 'rxjs';
+import { AuthService } from '../services/auth.service';
+export const httpInterceptor: HttpInterceptorFn = (req, next) => {
+const authService = inject(AuthService);
+// Router usado p redirecionamentos em erros de autenticação/autorização.
+const router = inject(Router);
+const token = authService.obterToken();
+console.log('REQUEST', req.url);
 
-export const httpIntercptor: HttpInterceptorFn = (req, next) => {
-
-    console.log('Interceptando Requisiçao:' , req.url);
-    const token = 'fake-token-jwt';
-
-    const novaReq = req.clone({
-        setHeaders: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    return next(novaReq).pipe(
-        tap({
-            next: (event) => console.log('Responde: ', event),
-            error: (error) => console.error('Erro de Requisiçao:', error )
-        }),
-        catchError((error) =>{
-            console.error('ERRO GLOBAL:', error);
-            if (error.status === 401){
-                console.warn('Erro de requisiçao global!', error);
-            }
-            if (error.status === 500){
-                console.warn('Erro interno do servidor!', error);
-            }
-            return throwError(() => error);
-        }),
-
-    );
-
+const novaReq = token
+? req.clone({
+setHeaders: {
+Authorization: `Bearer ${token}`,
+},
+})
+: req;
+return next(novaReq).pipe(
+tap({
+next: (event) => console.log('RESPONSE:', event),
+error: (error) => console.error('ERRO:', error),
+}),
+catchError((error) => {
+console.error('ERRO GLOBAL:', error);
+// 401 -> ausência de autenticação ou token inválido.
+if (error.status === 401) {
+console.warn('Não autorizado. Faça login novamente.');
+authService.logout();
+router.navigateByUrl('/login');
+}
+// 403 -> usuario autenticado, mas sem permissão.
+if (error.status === 403) {
+console.warn('Acesso proibido. Perfil sem permissão.');
+router.navigateByUrl('/produtos');
+}
+// 500 -> erro interno do servidor
+if (error.status === 500) {
+console.warn('Erro interno do servidor!');
+}
+return throwError(() => error);
+}),
+);
 };
