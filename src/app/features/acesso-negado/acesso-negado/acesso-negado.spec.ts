@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Admin } from './admin';
+import { AcessoNegado } from './acesso-negado';
 
-describe('Admin', () => {
-  let component: Admin;
-  let fixture: ComponentFixture<Admin>;
+describe('AcessoNegado', () => {
+  let component: AcessoNegado;
+  let fixture: ComponentFixture<AcessoNegado>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Admin],
+      imports: [AcessoNegado],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Admin);
+    fixture = TestBed.createComponent(AcessoNegado);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
