@@ -14,6 +14,7 @@ usuarioAtual = computed(() => this.usuario());
 estaLogado = computed(() => this.usuario() !== null);
 ehAdmin = computed(() => this.usuario()?.perfil === 'admin');
 token = computed(() => this.tokenJwt());
+
 login(email: string, senha: string): boolean {
 if (!email || !senha) {
 return false;

@@ -1,21 +1,17 @@
-import { Component} from '@angular/core';
-import {Produto} from '../produto/produto'
-import {signal} from '@angular/core'
-import { computed } from '@angular/core';
-import { PrecoFormatadoPipe } from '../../../shared/pipes/preco-formatado-pipe';
-import { effect} from '@angular/core';
-import { UpperCasePipe } from '@angular/common';
+import { Component, signal, computed, effect, inject } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
 import { produtosService } from '../../../core/services/produtos.service';
-import { inject } from '@angular/core';
-import { CarrinhoService } from '../../../core/services/carrinho.service';
-
+import { CarrinhoFacade } from '../../../core/facades/carrinho.facade';
+import { Produto } from '../produto/produto';
 @Component({
   selector: 'app-lista-produtos',
-  imports: [Produto,PrecoFormatadoPipe,UpperCasePipe],
+  imports: [Produto,MatButtonModule,],
   templateUrl: './lista-produtos.html',
   styleUrl: './lista-produtos.css',
 })
+
 export class ListaProdutos {
+  
   erro = signal <string | null> (null);
  //Lista com dados - Array
   produtos = signal <{nome: string; preco: number}[]>([]);
@@ -88,20 +84,8 @@ this.carregando.set(false);
       //! metodo para criar um estado de seleçao carrinho com signal
       
       adicionarAoCarrinho(produto:{nome: string; preco: number}){
-        this.carrinhoService.adicionar(produto);
+        this.carrinhoFacade.adicionarProduto(produto);
         ;
       }
-    //!metodo para calcular a quantidade total de itens no carrinho
-
-//!metodo que calcular o valor total dos itens do carrinho
-
-//!metodo que calcular o valor total dos itens do carrinho
-
-
-private produtosService = inject(produtosService);
-public carrinhoService = inject(CarrinhoService);
-
-quantidadeCarrinho = this.carrinhoService.quantidadeItens;
-totalCarrinho = this.carrinhoService.totalItens;
-
+    
 }
