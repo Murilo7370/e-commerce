@@ -3,89 +3,88 @@ import { MatButtonModule } from '@angular/material/button';
 import { produtosService } from '../../../core/services/produtos.service';
 import { CarrinhoFacade } from '../../../core/facades/carrinho.facade';
 import { Produto } from '../produto/produto';
+import { ProdutoLoja } from '../../../core/models/produto-loja';
+
 @Component({
-  selector: 'app-lista-produtos',
-  imports: [Produto,MatButtonModule,],
-  templateUrl: './lista-produtos.html',
-  styleUrl: './lista-produtos.css',
+selector: 'app-lista-produtos',
+imports: [Produto, MatButtonModule],
+templateUrl: './lista-produtos.html',
+styleUrl: './lista-produtos.css',
 })
 
 export class ListaProdutos {
-  
-  erro = signal <string | null> (null);
- //Lista com dados - Array
-  produtos = signal <{nome: string; preco: number}[]>([]);
-  carregando = signal(true);
-//!funçao para exibir produtos selecionados pelo usuario no console
-  exibirProduto(nome: string){
-    console.log('Produto Selecionado: ', nome);
-    this.produtoSelecionado.set(nome);
+
+// INJECTS
+private produtosServices = inject(produtosService);
+
+produtosService = inject(produtosService); 
+valorTotalFormado = computed(() =>this.valorTotal);
+//quantidade total do carrinho
+carrinhoFacade = inject(CarrinhoFacade);
+quantidadeCarrinho = this.carrinhoFacade.quantidadeCarrinho;
+totalCarrinho = this.carrinhoFacade.totalCarrinho;
+
+// === SIGNALS
+
+produtos = signal< ProdutoLoja []>([]);
+produtoSelecionado = signal<string | null>(null);
+carregando = signal(true);
+erro = signal<string | null>(null);
+
+// === COMPUTED
+
+totalProdutos = computed(() => this.produtos().length);
+valorTotal = computed(() => {
+return this.produtos().reduce((total, item) => total + item.preco, 0);
+});
+
+// === CONSTRUTOR
+
+constructor() {
+this.carregarProdutos();
+effect(() => {
+console.log('Lista de produtos alterada:', this.produtos());
+});
+effect(() => {
+console.log('Valor total atualizado:', this.valorTotal());
+});
+effect(() => {
+if (typeof document !== 'undefined') {
+document.title = `(${this.totalProdutos()}) Minha Loja`;
   }
-  //!funçao que adicionar produto usando metodo update()
-  adicionarProduto(){
-    this.produtos.update(listaAtual => [
-      ...listaAtual,
-      {nome:'Playstation 5', preco:3000},
-     ]);
-    }
-    //!funçao que contabiliza a quantidade de produtos na lista com metodo computed()
-    totalProdutos = computed(() =>this.produtos().length);
-    //!funçao que calcula o valor total do produtos usando o metodo computed()
-    valorTotal = computed(() => 
-    {return this.produtos().reduce((total,item) =>
-      total + item.preco,0)});
-     //!funçao para substituir a lista atual usando o metodo set()
-    substituirProdutos(){
-      this.produtos.set([
-        {nome:'Teclado', preco:50},
-        {nome:'Mouse', preco:15},
-        {nome:'Monitor', preco:500},
-        {nome:'Desktop', preco:1500},
-        {nome:'headest', preco:30},
-      ]);
-    }
-carregarProdutos(){
-  this.carregando.set(true);
-  this.produtosService.buscarProdutos().subscribe({
-    next: (dados) => {
-      const produtos = this.produtosService.transformarProdutos(dados);
-      this.produtos.set(produtos);
-      this.carregando.set(false);
-    },
-  error: (erro) => {
-      console.error('Erro ao carregar produtos: ',erro);
-      this.erro.set('Erro o carregar produtos.por favor tente novamente!');
+ });
+}
+
+// === MÉTODO HTTP (API)
+carregarProdutos() {
+this.erro.set(null);
+this.carregando.set(true);
+this.produtosService.buscarProdutos().subscribe({
+next: (dados) => {
+const produtos = this.produtosService.transformarProdutos(dados);
+this.produtos.set(produtos);
 this.carregando.set(false);
-    }
-  });
-   }
-    
-    //! metodo para monitorar alteraçoes em tempo real usando effect()
-    constructor(){
-      //! Carrega a API
-      this.carregarProdutos();
+},
+error: (erro) => {
+console.error('Erro ao carregar produtos:', erro);
+this.erro.set('Erro ao carregar produtos. Verifique sua conexão e tente novamente.');
+this.carregando.set(false);
+},
+});
+}
+// === DEMAIS MÉTODOS
+exibirProduto(nome: string) {
+this.produtoSelecionado.set(nome);
+}
 
-      //!effect continuam iguais - nao mexer
-      effect(() => {
-      console.log('Lista de Produtos Alterados', this.produtos())  ;
-      });
-      effect(() => {
-        console.log('Valor Total Atualizado', this.valorTotal());
-      });
-      effect(() => {
-        if (typeof document !== 'undefined'){
-          document.title =`(${this.totalProdutos()}) - Loja do Ferreira`;
-        }
-      });
-    }
-    //! Metodo para criar um estado de seleçao com signal string | null
-    produtoSelecionado = signal <string | null>(null);
+adicionarProduto() {
+this.produtos.update((listaAtual) => [...listaAtual, { nome: 'Teclado', preco: 250 }]);
+}
 
-      //! metodo para criar um estado de seleçao carrinho com signal
-      
-      adicionarAoCarrinho(produto:{nome: string; preco: number}){
-        this.carrinhoFacade.adicionarProduto(produto);
-        ;
-      }
-    
+substituirProdutos() {
+this.produtos.set([{ nome: 'Produto novo', preco: 999 }]);
+}
+adicionarAoCarrinho(produto: { nome: string; preco: number }) {
+this.carrinhoFacade.adicionarProdutosCarrinho(produto);
+}
 }

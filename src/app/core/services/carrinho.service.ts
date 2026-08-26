@@ -34,6 +34,10 @@ adicionar(produto:{nome:string; preco:number}){
 
 limpar(){
     this.carrinho.set([]);
-}
+ }
+
+ removerItem (rmvItem:number){
+    this.carrinho.update((listaAtual)=>listaAtual.filter((_, index) => index !== rmvItem));
+ }
 }
 

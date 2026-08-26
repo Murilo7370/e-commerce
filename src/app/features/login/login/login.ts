@@ -2,8 +2,7 @@ import { Component, inject,signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { authFacade } from '../../../core/facades/auth.facade';
-
+import { AuthFacade } from '../../../core/facades/auth.facade';
 
 @Component({
   selector: 'app-login',
@@ -12,7 +11,7 @@ import { authFacade } from '../../../core/facades/auth.facade';
   styleUrl: './login.css',
 })
 export class Login {
-  private authFacade = inject(authFacade);
+  private AuthFacade = inject(AuthFacade);
   private router = inject(Router);
 
 erroLogin = signal(false);
@@ -33,18 +32,18 @@ return;
 const email = this.formulario.value.email ?? '';
 const senha = this.formulario.value.senha ?? '';
 
-const loginRealizado = this.authFacade.realizarLogin(email, senha);
+const loginRealizado = this.AuthFacade.realizarLogin(email, senha);
 
 if (!loginRealizado) {
 this.erroLogin.set(true);
 return;
 }
 
-if (this.authFacade.ehAdmin()) {
+if (this.AuthFacade.admin()) {
 this.router.navigateByUrl('/admin');
 return;
 }
 
 this.router.navigateByUrl('/produtos');
-}
+ }
 }

@@ -13,19 +13,20 @@ templateUrl: './header.html',
 styleUrl: './header.css',
 })
 export class Header {
+    nomeLoja = 'Mercado confia';
 // o Header deixa de acessar diretamente os services.
 // Agora ele consome facades, que simplificam o acesso ao carrinho e à autenticação.
 private carrinhoFacade = inject(CarrinhoFacade);
 private authFacade = inject(AuthService);
 private router = inject(Router);
 // Sinais recebidos da facade do carrinho.
-quantidade = this.carrinhoFacade.quantidade;
+quantidade = this.carrinhoFacade.quantidadeCarrinho
 // Sinais recebidos da facade de autenticação.
 estaLogado = this.authFacade.estaLogado;
 usuarioAtual = this.authFacade.usuarioAtual;
 sair() {
 // Logout feito pela facade, não mais diretamente pelo service.
-this.authFacade.sair();
+this.authFacade.logout();
 this.router.navigateByUrl('/login');
 }
 }

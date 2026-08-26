@@ -29,5 +29,5 @@ return `Usuário autenticado como ${usuario.perfil}.`;
 sair() {
 this.authFacade.sair();
 this.router.navigateByUrl('/login');
-}
+ }
 }

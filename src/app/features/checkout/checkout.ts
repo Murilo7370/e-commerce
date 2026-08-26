@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import {ReactiveFormsModule,FormGroup,FormControl,Validators,AbstractControl,ValidationErrors,
-} from '@angular/forms';
+import {ReactiveFormsModule,FormGroup,FormControl,Validators,AbstractControl,ValidationErrors,} from '@angular/forms';
 import { CarrinhoFacade } from '../../core/facades/carrinho.facade';
+
 function nomeSemNumeros(control: AbstractControl): ValidationErrors | null {
 const valor = control.value;
 if (!valor) return null;
@@ -37,14 +37,12 @@ this.formulario.markAllAsTouched();
 return;
 }
 const dados = this.formulario.value;
-const itens = this.carrinhoFacade.itens();
-const total = this.carrinhoFacade.total();
-
+const itens = this.carrinhoFacade.itensCarrinho();
+const total = this.carrinhoFacade.totalCarrinho();
 console.log('Compra finalizada com sucesso!');
 console.log('Dados do formulário:', dados);
 console.log('Itens do carrinho:', itens);
 console.log('Total da compra:', total);
-
 this.carrinhoFacade.limparCarrinho();
 this.formulario.reset();
 this.compraFinalizada.set(true);
