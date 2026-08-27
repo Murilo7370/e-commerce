@@ -5,7 +5,7 @@ import { AuthFacade } from '../facades/auth.facade';
 export const authGuard: CanActivateFn = () => {
 const authFacade = inject(AuthFacade);
 const router = inject(Router);
-if (AuthFacade.estaLogado()) {
+if (authFacade.usuarioLogado()) {
 return true;
 }
 return router.createUrlTree(['/login']);
