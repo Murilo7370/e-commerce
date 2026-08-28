@@ -4,6 +4,7 @@ import { produtosService } from '../../../core/services/produtos.service';
 import { CarrinhoFacade } from '../../../core/facades/carrinho.facade';
 import { Produto } from '../produto/produto';
 import { ProdutoLoja } from '../../../core/models/produto-loja';
+import { ItemCarrinho } from '../../../core/models/item-carrinho';
 
 @Component({
 selector: 'app-lista-produtos',
@@ -84,7 +85,7 @@ this.produtos.update((listaAtual) => [...listaAtual, { nome: 'Teclado', preco: 2
 substituirProdutos() {
 this.produtos.set([{ nome: 'Produto novo', preco: 999 }]);
 }
-adicionarAoCarrinho(produto: { nome: string; preco: number }) {
+adicionarAoCarrinho(produto: ItemCarrinho) {
 this.carrinhoFacade.adicionarProdutosCarrinho(produto);
-}
+ }
 }

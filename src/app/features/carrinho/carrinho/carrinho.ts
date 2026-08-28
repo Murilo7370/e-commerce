@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
 import { CarrinhoFacade } from '../../../core/facades/carrinho.facade';
+import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-carrinho',
-  imports: [],
+  imports: [RouterLink, MatButtonModule],
   templateUrl: './carrinho.html',
   styleUrl: './carrinho.css',
 })
